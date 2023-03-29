@@ -81,26 +81,26 @@ connection.onInitialized(() => {
 });
 
 // The example settings
-interface ExampleSettings {
+interface CoexAtpSettings {
 	maxNumberOfProblems: number;
 }
 
 // The global settings, used when the `workspace/configuration` request is not supported by the client.
 // Please note that this is not the case when using this server with the client provided in this example
 // but could happen with other clients.
-const defaultSettings: ExampleSettings = { maxNumberOfProblems: 1000 };
-let globalSettings: ExampleSettings = defaultSettings;
+const defaultSettings: CoexAtpSettings = { maxNumberOfProblems: 1000 };
+let globalSettings: CoexAtpSettings = defaultSettings;
 
 // Cache the settings of all open documents
-const documentSettings: Map<string, Thenable<ExampleSettings>> = new Map();
+const documentSettings: Map<string, Thenable<CoexAtpSettings>> = new Map();
 
 connection.onDidChangeConfiguration(change => {
 	if (hasConfigurationCapability) {
 		// Reset all cached document settings
 		documentSettings.clear();
 	} else {
-		globalSettings = <ExampleSettings>(
-			(change.settings.languageServerExample || defaultSettings)
+		globalSettings = <CoexAtpSettings>(
+			(change.settings.languageServerCoexAtp || defaultSettings)
 		);
 	}
 
@@ -108,7 +108,7 @@ connection.onDidChangeConfiguration(change => {
 	documents.all().forEach(validateTextDocument);
 });
 
-function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
+function getDocumentSettings(resource: string): Thenable<CoexAtpSettings> {
 	if (!hasConfigurationCapability) {
 		return Promise.resolve(globalSettings);
 	}
@@ -116,7 +116,7 @@ function getDocumentSettings(resource: string): Thenable<ExampleSettings> {
 	if (!result) {
 		result = connection.workspace.getConfiguration({
 			scopeUri: resource,
-			section: 'languageServerExample'
+			section: 'languageServerCoexAtp'
 		});
 		documentSettings.set(resource, result);
 	}
@@ -194,12 +194,12 @@ connection.onCompletion(
 		// info and always provide the same completion items.
 		return [
 			{
-				label: 'TypeScript',
+				label: '# Coex: Repeat',
 				kind: CompletionItemKind.Text,
 				data: 1
 			},
-			{
-				label: 'JavaScript',
+			{                          
+				label: '# Coex: JavaScript',
 				kind: CompletionItemKind.Text,
 				data: 2
 			}
@@ -212,8 +212,8 @@ connection.onCompletion(
 connection.onCompletionResolve(
 	(item: CompletionItem): CompletionItem => {
 		if (item.data === 1) {
-			item.detail = 'TypeScript details';
-			item.documentation = 'TypeScript documentation';
+			item.detail = 'Repeat details';
+			item.documentation = 'Repeat documentation';
 		} else if (item.data === 2) {
 			item.detail = 'JavaScript details';
 			item.documentation = 'JavaScript documentation';
